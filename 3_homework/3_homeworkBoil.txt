@@ -1,0 +1,38 @@
+data ortho;
+	INPUT x1 x2 x3 y;*lid pot salt;
+	DATALINES;
+	1   1  1 111
+	1   1 -1 128
+	1  -1  1 121
+	1  -1 -1 112
+	-1  1  1 127
+	-1  1 -1 125
+	-1 -1  1 109
+	-1 -1 -1 132
+;
+/* Note, the "y" response variable is just for demonstration purpose. 
+   I didn't actually run the experiment*/
+
+proc glm;
+	model y = x1| x2 |x3 / SOLUTION XPX;
+RUN;
+	
+proc glmmod DATA = ortho;
+   model y = x1 | x2 | x3;
+run;
+
+proc glm;
+	model y = x1 x2 x3  x1*x2 x1*x3 x2*x3 / SOLUTION XPX;
+RUN;
+
+proc glmmod DATA = ortho;
+   model y = x1 x2 x3  x1*x2 x1*x3 x2*x3;
+run;
+
+proc glm DATA = ortho;
+	model y = x1 x2 x3 / SOLUTION XPX;
+RUN;
+
+proc glmmod DATA = ortho outparm=Parm outdesign=Design;
+   model y = x1 x2 x3;
+run;
